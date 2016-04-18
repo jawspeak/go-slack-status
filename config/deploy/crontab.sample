@@ -1,10 +1,7 @@
 # This crontab is automatically generated on deploy
 
-SHELL=/bin/bash
-MAILTO=you@example.com
-STASH_TOOL_PWD=/home/you/slack-status-tool
-STASH_TOOL_RUN="$STASH_TOOL_PWD/go-slack-status -conf=$STASH_TOOL_PWD/config.json -stderrthreshold=INFO"
-LOG_FILE="$STASH_TOOL_PWD/log/cron.log"
+# Note redhat does not support env variables, so this is ugly. Later could create a template tool to gen this, or put scheduling in a long-running go process which becomes a server.
+# http://stackoverflow.com/questions/2229825/where-can-i-set-environment-variables-that-crontab-will-use/10657111#10657111
 
 
 # Time in local time of user, which you can tell by logging in and typing 'date'.
@@ -18,11 +15,10 @@ LOG_FILE="$STASH_TOOL_PWD/log/cron.log"
 
 
 # Fetch data once in the morning.
-40 9 * * 1-5 $STASH_TOOL_RUN -mode=live  >> $LOG_FILE 2>&1
+40 9 * * 1-5 /home/yourname/slack-status-tool/go-slack-status -conf=/home/yourname/slack-status-tool/config.json -stderrthreshold=INFO   -mode=live    >> /home/yourname/slack-status-tool/log/cron.log 2>&1
+
 
 # Then send out for teams
-59 9 * * 1-5 $STASH_TOOL_RUN -mode=cache -team='Frontend' -team='Server' >> $LOG_FILE 2>&1
+59 9 * * 1-5 /home/yourname/slack-status-tool/go-slack-status -conf=/home/yourname/slack-status-tool/config.json -stderrthreshold=INFO   -mode=cache -team='Frontend' -team='Server'      >>  /home/yourname/slack-status-tool/log/cron.log 2>&1
 
-59 9 * * 1-5 $STASH_TOOL_RUN -mode=cache -team='Mobile - Android' -team='Mobile - iOS' >> $LOG_FILE 2>&1
-
-
+59 9 * * 1-5 /home/yourname/slack-status-tool/go-slack-status -conf=/home/yourname/slack-status-tool/config.json -stderrthreshold=INFO   -mode=cache -team='Mobile - Android' -team='Mobile - iOS'    >>  /home/yourname/slack-status-tool/log/cron.log 2>&1
