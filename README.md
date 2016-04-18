@@ -1,6 +1,6 @@
 ### Post to Slack Atlassian Bitbucket (Stash) status updates
 
-No external dependencies.
+No significant external dependencies.
 
 ### Development
 
@@ -31,4 +31,4 @@ I run `go install ./...` to install this binary in bin/ (and see my PATH edit ab
 
 See the `Makefile` for generating, building, and running.
 
-I scp this script to my server I eventually run this on. I 
+I scp this script to my server I eventually run this on. See the crontab work in the capistrano script.
