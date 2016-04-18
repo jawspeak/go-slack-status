@@ -1,17 +1,17 @@
 package slack
-import (
-	"github.com/jawspeak/go-slack-status/config"
-	"encoding/json"
-	"github.com/golang/glog"
-	"net/http"
-	"bytes"
-	"io/ioutil"
-	"github.com/jawspeak/go-slack-status/bitbucket/cache"
-	"fmt"
-	"time"
-	"strings"
-)
 
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"github.com/golang/glog"
+	"github.com/jawspeak/go-slack-status/bitbucket/cache"
+	"github.com/jawspeak/go-slack-status/config"
+	"io/ioutil"
+	"net/http"
+	"strings"
+	"time"
+)
 
 type SlackClient struct {
 	conf                  *config.Config
@@ -30,6 +30,7 @@ var colorPallet = [2][1]string{
 	[1]string{"#ddd"},
 	[1]string{"#666"},
 }
+
 const bullet = "• "
 const check = "✓ ~"
 const MERGED = "MERGED"
@@ -56,11 +57,11 @@ func NewSlackClient(conf *config.Config, cacheData *cache.Data) *SlackClient {
 	yesterdayEnd := time.Date(yesterday.Year(), yesterday.Month(), yesterday.Day(), 23, 59, 0, 0, loc)
 
 	return &SlackClient{
-		conf: conf,
-		cachedata: cacheData,
-		now: now,
-		yesterdayStart: yesterdayStart,
-		yesterdayEnd: yesterdayEnd,
+		conf:                  conf,
+		cachedata:             cacheData,
+		now:                   now,
+		yesterdayStart:        yesterdayStart,
+		yesterdayEnd:          yesterdayEnd,
 		locationOfServerTimes: loc, // our bitbucket server is in pacific time
 	}
 }
@@ -147,23 +148,22 @@ func (c *SlackClient) buildRequestForTeam(i int, team config.Team) IncomingWebho
 			MarkdownIn: mrkdn,
 			Fallback: fmt.Sprintf("%s: %d created, %d merged, commented %dx in %d PRs, (%d outstanding)",
 				ldapName, len(createdPrs), len(mergedPrs), len(commentsInPrs), len(prsCommentedIn), len(outstandingPrs)),
-			ColorHex: colorPallet[colorI][colorJ],
-			AuthorName: ldapName,
+			ColorHex:      colorPallet[colorI][colorJ],
+			AuthorName:    ldapName,
 			AuthorIconUrl: "",
-			Fields: fields,
+			Fields:        fields,
 		})
 	}
-
 
 	linkNamesLookup := make(map[bool]int)
 	linkNamesLookup[true] = 1
 	return IncomingWebhook{
-		Text: fmt.Sprintf("▼ ▼ ▼ What *%s* team did yesterday (%s) ▼ ▼ ▼ Virtual standup %s", team.TeamName, c.yesterdayStart.Format(SHORT_MMM_D), "@jaw"),
-		Attachments: attachments,
-		LinkNames: linkNamesLookup[team.SlackNotifyPeopleOnPosting],
-		unfurlLinks: false,
-		IconEmoji: team.SlackRobotEmoji,
-		RobotName: team.SlackRobotName,
+		Text:            fmt.Sprintf("▼ ▼ ▼ What *%s* team did yesterday (%s) ▼ ▼ ▼ Virtual standup %s", team.TeamName, c.yesterdayStart.Format(SHORT_MMM_D), "@jaw"),
+		Attachments:     attachments,
+		LinkNames:       linkNamesLookup[team.SlackNotifyPeopleOnPosting],
+		unfurlLinks:     false,
+		IconEmoji:       team.SlackRobotEmoji,
+		RobotName:       team.SlackRobotName,
 		ChannelWithHash: team.SlackChannelOverride,
 	}
 }
@@ -180,7 +180,7 @@ func (c *SlackClient) addCreatedPrs(fields *[]Field, createdPrs *map[int64]cache
 		} else {
 			buff.WriteString(bullet)
 			if len(e.ApprovalsByAuthorLdap) > 0 {
-				buff.WriteString(":white_check_box: ") // PR is approved, needs merging
+				buff.WriteString(":white_check_mark: ") // PR is approved, needs merging
 			}
 		}
 		buff.WriteString(fmt.Sprintf(createdFmt, e.SelfUrl, elipses(e.Title), e.Repo, e.Project))
@@ -222,7 +222,7 @@ func (c *SlackClient) addMergedPrs(fields *[]Field, mergedPrs *map[int64]cache.P
 }
 
 func (c *SlackClient) addComments(fields *[]Field, commentsInPrs *map[int64]cache.PrInteraction,
-prsCommentedIn *map[int64]cache.PullRequest) {
+	prsCommentedIn *map[int64]cache.PullRequest) {
 	const commentsFmt = "<%s|%s> +%d :speech_balloon:, %s/%s"
 
 	value := make([]string, 0)
@@ -233,7 +233,7 @@ prsCommentedIn *map[int64]cache.PullRequest) {
 		} else {
 			buff.WriteString(bullet)
 			if len(e.ApprovalsByAuthorLdap) > 0 {
-				buff.WriteString(":white_check_box: ") // PR is approved, needs merging
+				buff.WriteString(":white_check_mark: ") // PR is approved, needs merging
 			}
 		}
 
@@ -265,9 +265,9 @@ func (c *SlackClient) addOutstandingPrs(fields *[]Field, outstandingPrs *map[int
 		var buff bytes.Buffer
 		buff.WriteString(bullet)
 		if len(e.ApprovalsByAuthorLdap) > 0 {
-			buff.WriteString(":white_check_box: ") // PR is approved, needs merging
+			buff.WriteString(":white_check_mark: ") // PR is approved, needs merging
 		}
-		days := fmt.Sprintf("%.1f", time.Now().Sub(time.Unix(e.CreatedDateTime, 0)).Hours() / 24)
+		days := fmt.Sprintf("%.1f", time.Now().Sub(time.Unix(e.CreatedDateTime, 0)).Hours()/24)
 		buff.WriteString(fmt.Sprintf(outstandingFmt, e.SelfUrl, elipses(e.Title), e.CommentCount,
 			len(e.CommentsByAuthorLdap), e.Repo, e.Project, days))
 		value = append(value, buff.String())
