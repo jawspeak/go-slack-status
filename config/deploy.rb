@@ -2,9 +2,9 @@
 lock '3.4.1'
 
 set :application, 'slack-status-tool'
-set :repo_url, 'git@example.com:me/my_repo.git'
+set :repo_url, 'git@github.com:jawspeak/go-slack-status.git'
 # Default branch is :master
-ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
+# ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, '/home/jaw/slack-status-tool'
@@ -35,19 +35,26 @@ set :deploy_to, '/home/jaw/slack-status-tool'
 
 namespace :deploy do
 
+  on roles(:app) do
+    upload! "config.json", "#{current_path}/config.json"
+  end
 
   desc "Remove the remote user's crontab"
   task :remove_crontab do
-    run "crontab -r; true" # ignore non-zero status when there is no crontab
+    on roles :app do
+      execute :crontab, "-r; true" # ignore non-zero status when there is no crontab
+    end
   end
 
   desc "Generate and install crontabs"
   task :install_crontab do
-    crontab = ERB.new(File.read("config/deploy/crontab.erb"), nil, '-').result(binding)
+    on roles :app do
+      crontab = ERB.new(File.read("config/deploy/crontab.erb"), nil, '-').result(binding)
 
-    tmp_crontab_path = "#{current_path}/crontab.tmp"
-    put crontab, tmp_crontab_path
-    run "crontab #{tmp_crontab_path} && rm -f #{tmp_crontab_path}"
+      tmp_crontab_path = "#{current_path}/crontab.tmp"
+      upload! crontab, tmp_crontab_path
+      execute :crontab, "#{tmp_crontab_path} && rm -f #{tmp_crontab_path}"
+    end
   end
 
 end
