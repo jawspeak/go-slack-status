@@ -1,5 +1,8 @@
 # This crontab is automatically generated on deploy
 
+SHELL=/bin/bash
+MAILTO=you@example.com
+
 # Note redhat does not support env variables, so this is ugly. Later could create a template tool to gen this, or put scheduling in a long-running go process which becomes a server.
 # http://stackoverflow.com/questions/2229825/where-can-i-set-environment-variables-that-crontab-will-use/10657111#10657111
 
