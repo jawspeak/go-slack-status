@@ -1,0 +1,26 @@
+# This crontab is automatically generated on deploy
+
+SHELL=/bin/bash
+MAILTO=jaw@squareup.com
+STASH_STATS_EXE="/home/jaw/slack-status-tool/go-slack-status"
+LOG_FILE="/home/jaw/slack-status-tool/log/cron.log"
+
+
+# Fetch data once in the morning.
+40 16 * * 1-5 $STASH_STATS_EXE -mode=live -stderrthreshold=INFO >> $LOG_FILE 2>&1
+
+# Then send out for teams
+59 16 * * 1-5 $STASH_STATS_EXE -mode=cache -stderrthreshold=INFO -team='Frontend' -team='Server' >> $LOG_FILE 2>&1
+
+14 17 * * 1-5 $STASH_STATS_EXE -mode=cache -stderrthreshold=INFO -team='Mobile - Android' -team='Mobile - iOS' >> $LOG_FILE 2>&1
+
+
+# * * * * *
+# | | | | |
+# | | | | |
+# | | | | +---- Day of the Week   (range: 1-7, 1 standing for Monday)
+# | | | +------ Month of the Year (range: 1-12)
+# | | +-------- Day of the Month  (range: 1-31)
+# | +---------- Hour              (range: 0-23)
+# +------------ Minute            (range: 0-59)
+
