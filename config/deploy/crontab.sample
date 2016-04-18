@@ -1,0 +1,27 @@
+# This crontab is automatically generated on deploy
+
+SHELL=/bin/bash
+MAILTO=you@example.com
+STASH_STATS_EXE="/home/you/slack-status-tool/go-slack-status"
+LOG_FILE="/home/you/slack-status-tool/log/cron.log"
+
+
+# Time in local time of user, likely UTC if on server.
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  *  command to be executed
+
+
+# Fetch data once in the morning.
+40 16 * * 1-5 $STASH_STATS_EXE -mode=live -stderrthreshold=INFO >> $LOG_FILE 2>&1
+
+# Then send out for teams
+59 16 * * 1-5 $STASH_STATS_EXE -mode=cache -stderrthreshold=INFO -team='Frontend' -team='Server' >> $LOG_FILE 2>&1
+
+14 17 * * 1-5 $STASH_STATS_EXE -mode=cache -stderrthreshold=INFO -team='Mobile - Android' -team='Mobile - iOS' >> $LOG_FILE 2>&1
+
+

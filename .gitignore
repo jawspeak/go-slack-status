@@ -1,5 +1,4 @@
 config.json
 pr-cached-data.json
-Capfile
-config/deploy/production.rb
-config/deploy/staging.rb
+config/deploy/crontab
+Makefile
