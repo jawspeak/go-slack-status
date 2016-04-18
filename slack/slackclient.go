@@ -179,9 +179,6 @@ func (c *SlackClient) addCreatedPrs(fields *[]Field, createdPrs *map[int64]cache
 			buff.WriteString(check)
 		} else {
 			buff.WriteString(bullet)
-			if len(e.ApprovalsByAuthorLdap) > 0 {
-				buff.WriteString(":white_check_mark: ") // PR is approved, needs merging
-			}
 		}
 		buff.WriteString(fmt.Sprintf(createdFmt, e.SelfUrl, elipses(e.Title), e.Repo, e.Project))
 		if e.State == MERGED {
@@ -232,9 +229,6 @@ func (c *SlackClient) addComments(fields *[]Field, commentsInPrs *map[int64]cach
 			buff.WriteString(check)
 		} else {
 			buff.WriteString(bullet)
-			if len(e.ApprovalsByAuthorLdap) > 0 {
-				buff.WriteString(":white_check_mark: ") // PR is approved, needs merging
-			}
 		}
 
 		buff.WriteString(fmt.Sprintf(commentsFmt, e.SelfUrl, elipses(e.Title), len(*commentsInPrs),
@@ -264,9 +258,10 @@ func (c *SlackClient) addOutstandingPrs(fields *[]Field, outstandingPrs *map[int
 	for _, e := range *outstandingPrs {
 		var buff bytes.Buffer
 		buff.WriteString(bullet)
-		if len(e.ApprovalsByAuthorLdap) > 0 {
-			buff.WriteString(":white_check_mark: ") // PR is approved, needs merging
-		}
+		// TODO also verify no unapprovals, or look which is latest.
+		// if len(e.ApprovalsByAuthorLdap) > 0 {
+		// buff.WriteString(":white_check_mark: ") // PR is approved, needs merging
+		// }
 		days := fmt.Sprintf("%.1f", time.Now().Sub(time.Unix(e.CreatedDateTime, 0)).Hours()/24)
 		buff.WriteString(fmt.Sprintf(outstandingFmt, e.SelfUrl, elipses(e.Title), e.CommentCount,
 			len(e.CommentsByAuthorLdap), e.Repo, e.Project, days))
