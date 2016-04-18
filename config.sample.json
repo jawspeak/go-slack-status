@@ -1,0 +1,43 @@
+// Config file you use to connect to your repository.
+// Rename to config.json when you're ready for your environment.
+// Reminder - json doesn't accept comments usually, we strip these out.
+{
+  // Don't include https here, we add it.
+  "host": "api.example.com",
+  "username": "your-user",
+  // If password is blank, will prompt for it on the command line.
+  "password": "your-pass",
+
+  // How far back to fetch data (to see if someone has a very old PR)
+  "look_back_days": 4,
+
+  "stash_projects": [
+    {
+      "project": "MYPROJ",
+      "repos": ["repo1", "repo2"]
+    }
+  ],
+
+  "stats_for_these_teams": [
+    {
+      // Note if you rename this, the crontab also needs updating
+      "team_name": "Server",
+      // for #your-test channel
+      "slack_incoming_webhook_url": "https://hooks.slack.com/services/xx/yy/zz",
+      "slack_channel_override": "#some-other-test2-channel", // optional
+      "slack_notify_people_on_posting": true,
+      "robot_name": "Server Standup-bot",
+      "robot_emoji": ":eyes:",
+      "members_ldap_names": [
+        "person1",
+        "person2"
+      ]
+    }
+  ],
+
+  // Maybe you have a tool that comments on every PR - add the name here to ignore.
+  "ignore_comments_from_usernames": [
+    "some-robo-poster"
+  ]
+}
+
