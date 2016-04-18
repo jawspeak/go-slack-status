@@ -1,20 +1,21 @@
 package main
 
 import (
+	"github.com/jawspeak/go-slack-status/bitbucket"
 	"github.com/jawspeak/go-slack-status/config"
 	"github.com/jawspeak/go-slack-status/slack"
-	"github.com/jawspeak/go-slack-status/bitbucket"
 
+	"flag"
+	"fmt"
 	"github.com/golang/glog"
 	"github.com/jawspeak/go-slack-status/bitbucket/cache"
-	"time"
-	"flag"
 	"os"
-	"fmt"
 	"strings"
+	"time"
 )
 
 type teams []string
+
 func (t *teams) String() string {
 	return fmt.Sprint(*t)
 }
@@ -24,6 +25,7 @@ func (teams *teams) Set(value string) error {
 	}
 	return nil
 }
+
 // Works well if you have a crontab and want different teams to run at different times, and some to use the cache
 // while others to re-fetch the data. This string matches the name it the config
 // You can pass in multiple "-team abc -team def" etc to run multiple teams at once.
@@ -35,8 +37,9 @@ func init() {
 
 func main() {
 	var modeFlag = flag.String("mode", "", "[cached|live] to use the local cache of data or re-fetch it. if [live] it will exit after fetching.")
+	var confFilePath = flag.String("conf", "./config.json", "path to config.json")
 	flag.Parse()
-	conf := config.Setup()
+	conf := config.Setup(confFilePath)
 	glog.Info("starting. loaded config")
 
 	var cachedata *cache.Data
@@ -83,4 +86,3 @@ func runAllTeams(conf *config.Config, slackClient *slack.SlackClient, cachedata 
 		time.Sleep(time.Second * 30) // ping each team one at a time
 	}
 }
-

@@ -3,37 +3,38 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/golang/glog"
 	"golang.org/x/crypto/ssh/terminal"
 	"io/ioutil"
 	"os"
 	filepath "path/filepath"
 	"regexp"
-	"github.com/golang/glog"
 	"strings"
 )
 
 type Config struct {
-	StashHost              string `json:"stash_host"`
-	StashUsername          string `json:"stash_username"`
-	StashPassword          string `json:"stash_password"`
+	StashHost              string          `json:"stash_host"`
+	StashUsername          string          `json:"stash_username"`
+	StashPassword          string          `json:"stash_password"`
 	Projects               []projectConfig `json:"stash_projects"`
-	LookBackDays           int `json:"look_back_days"`
-	StatsForTheseTeams     []Team `json:"stats_for_these_teams"`
+	LookBackDays           int             `json:"look_back_days"`
+	StatsForTheseTeams     []Team          `json:"stats_for_these_teams"`
 	IgnoreCommentUsernames []string        `json:"ignore_comments_from_usernames"`
 }
 type Team struct {
-	TeamName                   string `json:"team_name"`
-	SlackIncomingWebhookUrl    string `json:"slack_incoming_webhook_url"`
-	SlackNotifyPeopleOnPosting bool `json:"slack_notify_people_on_posting"`
-	SlackRobotName             string `json:"robot_name"`
-	SlackRobotEmoji            string `json:"robot_emoji"`
-	SlackChannelOverride       string `json:"slack_channel_override"`
+	TeamName                   string   `json:"team_name"`
+	SlackIncomingWebhookUrl    string   `json:"slack_incoming_webhook_url"`
+	SlackNotifyPeopleOnPosting bool     `json:"slack_notify_people_on_posting"`
+	SlackRobotName             string   `json:"robot_name"`
+	SlackRobotEmoji            string   `json:"robot_emoji"`
+	SlackChannelOverride       string   `json:"slack_channel_override"`
 	Members                    []string `json:"members_ldap_names"`
 }
 type projectConfig struct {
 	Project string   `json:"project"`
 	Repos   []string `json:"repos"`
 }
+
 func (c *Config) TeamsMap() map[string]Team {
 	teamsMap := make(map[string]Team)
 	for _, t := range c.StatsForTheseTeams {
@@ -96,9 +97,9 @@ func parseJsonFileStripComments(path string, conf interface{}) {
 	glog.Info("comment filtered config.json file contents:", string(file))
 }
 
-func Setup() *Config {
+func Setup(pathToConfig *string) *Config {
 	var conf Config
-	parseJsonFileStripComments("./config.json", &conf)
+	parseJsonFileStripComments(*pathToConfig, &conf)
 	validateRequiredField("host", &conf.StashHost)
 	validateRequiredField("username", &conf.StashUsername)
 	validateNoCommasInTeamNames(&conf.StatsForTheseTeams)

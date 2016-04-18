@@ -2,11 +2,12 @@
 
 SHELL=/bin/bash
 MAILTO=you@example.com
-STASH_STATS_EXE="/home/you/slack-status-tool/go-slack-status"
-LOG_FILE="/home/you/slack-status-tool/log/cron.log"
+STASH_TOOL_PWD=/home/you/slack-status-tool
+STASH_TOOL_RUN="$STASH_TOOL_PWD/go-slack-status -conf=$STASH_TOOL_PWD/config.json -stderrthreshold=INFO"
+LOG_FILE="$STASH_TOOL_PWD/log/cron.log"
 
 
-# Time in local time of user, likely UTC if on server.
+# Time in local time of user, which you can tell by logging in and typing 'date'.
 # .---------------- minute (0 - 59)
 # |  .------------- hour (0 - 23)
 # |  |  .---------- day of month (1 - 31)
@@ -17,11 +18,11 @@ LOG_FILE="/home/you/slack-status-tool/log/cron.log"
 
 
 # Fetch data once in the morning.
-40 16 * * 1-5 $STASH_STATS_EXE -mode=live -stderrthreshold=INFO >> $LOG_FILE 2>&1
+40 9 * * 1-5 $STASH_TOOL_RUN -mode=live  >> $LOG_FILE 2>&1
 
 # Then send out for teams
-59 16 * * 1-5 $STASH_STATS_EXE -mode=cache -stderrthreshold=INFO -team='Frontend' -team='Server' >> $LOG_FILE 2>&1
+59 9 * * 1-5 $STASH_TOOL_RUN -mode=cache -team='Frontend' -team='Server' >> $LOG_FILE 2>&1
 
-14 17 * * 1-5 $STASH_STATS_EXE -mode=cache -stderrthreshold=INFO -team='Mobile - Android' -team='Mobile - iOS' >> $LOG_FILE 2>&1
+59 9 * * 1-5 $STASH_TOOL_RUN -mode=cache -team='Mobile - Android' -team='Mobile - iOS' >> $LOG_FILE 2>&1
 
 
