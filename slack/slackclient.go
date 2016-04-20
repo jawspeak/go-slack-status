@@ -157,8 +157,13 @@ func (c *SlackClient) buildRequestForTeam(i int, team config.Team) IncomingWebho
 
 	linkNamesLookup := make(map[bool]int)
 	linkNamesLookup[true] = 1
+	notify := make([]string, 0)
+	for _, m := range team.Members {
+		notify = append(notify, "@" + m)
+	}
+	names := strings.Join(notify, " ")
 	return IncomingWebhook{
-		Text:            fmt.Sprintf("▼ ▼ ▼ What *%s* team did yesterday (%s) ▼ ▼ ▼ Virtual standup %s", team.TeamName, c.yesterdayStart.Format(SHORT_MMM_D), "@jaw"),
+		Text:            fmt.Sprintf("▼ ▼ ▼ What *%s* team did yesterday (%s) ▼ ▼ ▼ Virtual standup %s", team.TeamName, c.yesterdayStart.Format(SHORT_MMM_D), names),
 		Attachments:     attachments,
 		LinkNames:       linkNamesLookup[team.SlackNotifyPeopleOnPosting],
 		unfurlLinks:     false,
@@ -231,7 +236,13 @@ func (c *SlackClient) addComments(fields *[]Field, commentsInPrs *map[int64]cach
 			buff.WriteString(bullet)
 		}
 
-		buff.WriteString(fmt.Sprintf(commentsFmt, e.SelfUrl, elipses(e.Title), len(*commentsInPrs),
+		newComments := 0
+		for _, c := range *commentsInPrs {
+			if c.PullRequestId == e.PullRequestId {
+				newComments++
+			}
+		}
+		buff.WriteString(fmt.Sprintf(commentsFmt, e.SelfUrl, elipses(e.Title), newComments,
 			e.Repo, e.Project))
 		if e.State == MERGED {
 			buff.WriteString("~")
