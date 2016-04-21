@@ -2,6 +2,8 @@
 
 No significant external dependencies.
 
+Check out your config repo into the `config-repo` folder which is ignored by this git repo. Then your team can have an internal private repo for collaborating crontabs and what teams get what notifications.
+
 ### Development
 
 I work with a separate GOPATH for open source work. In the folder holding the gopath src file, I have a GOPATH_source_me.sh script with the following contents:
