@@ -159,11 +159,11 @@ func (c *SlackClient) buildRequestForTeam(i int, team config.Team) IncomingWebho
 	linkNamesLookup[true] = 1
 	notify := make([]string, 0)
 	for _, m := range team.Members {
-		notify = append(notify, "@" + m)
+		notify = append(notify, "@"+m)
 	}
 	names := strings.Join(notify, " ")
 	return IncomingWebhook{
-		Text:            fmt.Sprintf("▼ ▼ ▼ What *%s* team did yesterday (%s) ▼ ▼ ▼ Virtual standup %s", team.TeamName, c.yesterdayStart.Format(SHORT_MMM_D), names),
+		Text:            fmt.Sprintf("▼ What *%s* team did yesterday (%s) ▼ Virtual standup %s", team.TeamName, c.yesterdayStart.Format(SHORT_MMM_D), names),
 		Attachments:     attachments,
 		LinkNames:       linkNamesLookup[team.SlackNotifyPeopleOnPosting],
 		unfurlLinks:     false,
@@ -192,7 +192,7 @@ func (c *SlackClient) addCreatedPrs(fields *[]Field, createdPrs *map[int64]cache
 		value = append(value, buff.String())
 	}
 	*fields = append(*fields, Field{
-		Title: fmt.Sprintf("%d Created", len(*createdPrs)),
+		Title: fmt.Sprintf("%d PRs Created", len(*createdPrs)),
 		Value: strings.Join(value, "\n"),
 		Short: true,
 	})
@@ -217,7 +217,7 @@ func (c *SlackClient) addMergedPrs(fields *[]Field, mergedPrs *map[int64]cache.P
 		value = append(value, buff.String())
 	}
 	*fields = append(*fields, Field{
-		Title: fmt.Sprintf("%d Merged", len(*mergedPrs)),
+		Title: fmt.Sprintf("%d PRs Merged", len(*mergedPrs)),
 		Value: strings.Join(value, "\n"),
 		Short: true,
 	})
@@ -251,7 +251,7 @@ func (c *SlackClient) addComments(fields *[]Field, commentsInPrs *map[int64]cach
 	}
 	var title string
 	if len(*commentsInPrs) > 0 {
-		title = fmt.Sprintf("%d Comments in %d PRs", len(*commentsInPrs), len(*prsCommentedIn))
+		title = fmt.Sprintf("Added %d Comments in %d PRs", len(*commentsInPrs), len(*prsCommentedIn))
 	} else {
 		title = "0 Comments"
 	}
@@ -279,7 +279,7 @@ func (c *SlackClient) addOutstandingPrs(fields *[]Field, outstandingPrs *map[int
 		value = append(value, buff.String())
 	}
 	*fields = append(*fields, Field{
-		Title: fmt.Sprintf("%d Outstanding", len(*outstandingPrs)),
+		Title: fmt.Sprintf("%d PRs Outstanding", len(*outstandingPrs)),
 		Value: strings.Join(value, "\n"),
 		Short: true,
 	})
