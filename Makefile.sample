@@ -8,8 +8,8 @@ _build_linux:
 	env GOOS=linux GOARCH=amd64 go build -v github.com/jawspeak/go-slack-status
 deploy: _build_linux
 	scp go-slack-status yourserver.com:slack-status-tool/go-slack-status
-	scp config/deploy/crontab yourserver.com:slack-status-tool/crontab.tmp
-	scp config.json yourserver.com:slack-status-tool
+	scp config-repo/deploy/crontab yourserver.com:slack-status-tool/crontab.tmp
+	scp config-repo/config.json yourserver.com:slack-status-tool
 	ssh yourserver.com 'crontab -r; true'
 	ssh yourserver.com 'crontab slack-status-tool/crontab.tmp && rm -f slack-status-tool/crontab.tmp'
 	rm ./go-slack-status
