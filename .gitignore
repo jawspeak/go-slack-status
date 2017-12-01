@@ -3,3 +3,4 @@ pr-cached-data.json
 config/deploy/crontab
 Makefile
 config-repo
+.tmp.*
