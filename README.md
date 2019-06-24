@@ -34,3 +34,8 @@ I run `go install ./...` to install this binary in bin/ (and see my PATH edit ab
 See the `Makefile` for generating, building, and running.
 
 I scp this script to my server I eventually run this on. See the crontab work in the capistrano script.
+
+### Here's what a message looks like from this slackbot
+As shown via the slack message [previewer](https://github.com/jawspeak/go-slack-status/blob/master/slack/request.go)
+
+![sample message](sample%20slackbot%20msg.png)
